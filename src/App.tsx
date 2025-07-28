@@ -786,7 +786,7 @@ function App() {
   );
 }
 
-// CSV解析函数 - 更新以支持新的数据格式和筛选逻辑
+// CSV解析函数 - 严格要求25字段格式
 const parseCSV = (csvText: string): MarkerData[] => {
   const lines = csvText.trim().split('\n');
   if (lines.length < 2) return [];
@@ -794,14 +794,29 @@ const parseCSV = (csvText: string): MarkerData[] => {
   const headers = lines[0].split(',');
   const markers: MarkerData[] = [];
 
-  console.log('📊 解析新数据格式中... (更新时间: ' + new Date().toLocaleString() + ')');
+  console.log('📊 解析25字段数据格式中... (更新时间: ' + new Date().toLocaleString() + ')');
   console.log('📋 CSV头部:', headers);
+  console.log('📋 字段数量:', headers.length);
+
+  // 严格检查25字段格式
+  if (headers.length < 25) {
+    console.error('❌ CSV格式错误：需要25字段格式，当前只有', headers.length, '字段');
+    console.error('❌ 期望格式：Outlet Code,Nama Pemilik,Tanggal Join,Type,Toko Type,Event,Contract Sign,Tanggal Turun Freezer,Tanggal First PO EsKrim,DUS per Day,Total Value IDR,Total DUS,PO berapa Kali,PO Frequency,Freezer Code,Spanduk,Flag Hanger,Poster,Papan Harga,Stiker Harga,Last Service,Last Bunga Es,latitude,longitude,Outlet Status');
+    return [];
+  }
+
+  console.log('✅ 检测到正确的25字段格式');
 
   for (let i = 1; i < lines.length; i++) {
     const values = lines[i].split(',');
-    if (values.length < 20) continue; // 至少需要20个字段
-
-    // 新字段顺序：Outlet Code,Nama Pemilik,Tanggal Join,Type,Toko Type,Event,Contract Sign,Tanggal Turun Freezer,Tanggal First PO EsKrim,DUS per Day,Total Value IDR,Total DUS,PO berapa Kali,PO Frequency,Freezer Code,Spanduk,Flag Hanger,Poster,Papan Harga,Stiker Harga,Last Service,Last Bunga Es,latitude,longitude,Outlet Status
+    
+    // 严格要求25字段
+    if (values.length < 25) {
+      console.log(`⚠️ 跳过不完整记录 (第${i+1}行): 只有${values.length}字段，需要25字段`);
+      continue;
+    }
+    
+    // 25字段格式：Outlet Code,Nama Pemilik,Tanggal Join,Type,Toko Type,Event,Contract Sign,Tanggal Turun Freezer,Tanggal First PO EsKrim,DUS per Day,Total Value IDR,Total DUS,PO berapa Kali,PO Frequency,Freezer Code,Spanduk,Flag Hanger,Poster,Papan Harga,Stiker Harga,Last Service,Last Bunga Es,latitude,longitude,Outlet Status
     const outletCode = values[0]?.replace(/"/g, '') || '';
     const namaPemilik = values[1]?.replace(/"/g, '') || '';
     const tanggalJoin = values[2]?.replace(/"/g, '') || '';

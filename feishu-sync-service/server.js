@@ -142,9 +142,15 @@ async function getFeishuData() {
 
     console.log(`📊 总共获取 ${allRecords.length} 条记录`);
 
-    // 添加调试：输出第一条记录的所有字段名
+    // 添加调试：输出第一条记录的所有字段名和原始数据
     if (allRecords.length > 0) {
       console.log('📋 飞书表格字段列表:', Object.keys(allRecords[0].fields));
+      console.log('\n🔍 === 第一条记录的原始字段数据 ===');
+      const firstRecord = allRecords[0].fields;
+      Object.keys(firstRecord).forEach(fieldName => {
+        console.log(`📝 字段 "${fieldName}":`, JSON.stringify(firstRecord[fieldName], null, 2));
+      });
+      console.log('=== 原始字段数据结束 ===\n');
     }
 
     // 过滤符合条件的数据：Outlet Status为Active
@@ -172,6 +178,32 @@ async function getFeishuData() {
       return '';
     }
     
+    // 辅助函数：提取飞书选择字段的值（处理选项ID数组）
+    function getSelectFieldText(field) {
+      if (!field) return '';
+      
+      // 处理选择字段的选项ID数组格式
+      if (Array.isArray(field) && field.length > 0) {
+        // 如果是文本数组格式 [{text: "value"}]
+        if (field[0] && field[0].text) {
+          return field[0].text;
+        }
+        // 如果是选项ID数组格式 ["opt5eb0nvd"]
+        if (typeof field[0] === 'string') {
+          // 这里我们需要将选项ID映射为实际文本
+          // 根据飞书表格的选项配置，opt5eb0nvd 对应 "Udah Pasang"
+          const optionMapping = {
+            'opt5eb0nvd': 'Udah Pasang',
+            'optXXXXXXX': '其他选项值' // 可以根据实际情况添加更多映射
+          };
+          return optionMapping[field[0]] || field[0]; // 如果找不到映射就返回原始ID
+        }
+      }
+      
+      // 回退到普通文本处理
+      return getFieldText(field);
+    }
+    
     // 辅助函数：处理日期字段格式
     function getDateFieldText(field) {
       if (!field) return '';
@@ -188,8 +220,20 @@ async function getFeishuData() {
       } else if (typeof field === 'string') {
         dateValue = field;
       } else if (typeof field === 'number') {
-        // 如果是时间戳，转换为日期格式
-        dateValue = new Date(field).toISOString().split('T')[0];
+        // 区分毫秒时间戳和Excel序列号
+        if (field > 1000000000000) {
+          // 毫秒时间戳（13位数字，大于1000000000000）
+          dateValue = new Date(field).toISOString().split('T')[0];
+        } else if (field > 1000 && field < 100000) {
+          // Excel序列号（4-5位数字）
+          const excelEpoch = new Date(1900, 0, 1);
+          const daysSinceEpoch = field - 2; // Excel的1900年闰年bug修正
+          const resultDate = new Date(excelEpoch.getTime() + daysSinceEpoch * 24 * 60 * 60 * 1000);
+          dateValue = resultDate.toISOString().split('T')[0];
+        } else {
+          // 其他数字格式，尝试直接转换
+          dateValue = new Date(field).toISOString().split('T')[0];
+        }
       } else if (field && typeof field === 'object') {
         // 处理飞书日期对象格式
         if (field.date) {
@@ -202,12 +246,17 @@ async function getFeishuData() {
       // 验证和格式化日期
       if (dateValue) {
         try {
-          // 检查是否为Excel序列号格式（纯数字且大于1000）
+          // 如果已经是YYYY-MM-DD格式，直接返回
+          if (/^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
+            return dateValue;
+          }
+          
+          // 检查是否为Excel序列号格式（字符串形式的数字）
           const numValue = parseFloat(dateValue);
           if (!isNaN(numValue) && numValue > 1000 && numValue < 100000) {
-            // Excel序列号转换为日期（Excel从1900年1月1日开始计算，但有闰年bug）
-            const excelEpoch = new Date(1900, 0, 1); // 1900年1月1日
-            const daysSinceEpoch = numValue - 2; // 减去2是因为Excel的1900年闰年bug
+            // Excel序列号转换为日期
+            const excelEpoch = new Date(1900, 0, 1);
+            const daysSinceEpoch = numValue - 2; // Excel的1900年闰年bug修正
             const resultDate = new Date(excelEpoch.getTime() + daysSinceEpoch * 24 * 60 * 60 * 1000);
             return resultDate.toISOString().split('T')[0];
           }
@@ -257,11 +306,13 @@ async function getFeishuData() {
       const poBerapaKali = getFieldText(fields['PO berapa Kali']);
       const poFrequency = getFieldText(fields['PO Frequency']);
       const freezerCode = getFieldText(fields['Freezer Code']);
-      const spanduk = getFieldText(fields['Spanduk']);
-      const flagHanger = getFieldText(fields['Flag Hanger']);
-      const poster = getFieldText(fields['Poster']);
-      const papanHarga = getFieldText(fields['Papan Harga']);
-      const stikerHarga = getFieldText(fields['Stiker Harga']);
+      // 日期字段处理完成
+      
+      const spanduk = getSelectFieldText(fields['Spanduk']);
+      const flagHanger = getSelectFieldText(fields['Flag Hanger']);
+      const poster = getSelectFieldText(fields['Poster']);
+      const papanHarga = getSelectFieldText(fields['Papan Harga']);
+      const stikerHarga = getSelectFieldText(fields['Stiker Harga']);
       const lastService = getDateFieldText(fields['Last Service']);
       const lastBungaEs = getDateFieldText(fields['Last Bunga Es']);
       const latitude = parseFloat(getFieldText(fields['latitude']));
