@@ -545,6 +545,8 @@ function App() {
      m.tanggalFirstPOEsKrim && m.tanggalFirstPOEsKrim.trim() !== '')
   ).length;
 
+
+
   console.log('统计数据:', {
     total: totalCount,
     gray: grayCount,
@@ -578,6 +580,7 @@ function App() {
         <div className="left-panels">
           <div className="info-panel">
             <div className="info-content">
+              <h4>🏪 店铺统计</h4>
               <div className="info-stats">
                 <div className="stat-item">
                   <span className="stat-value">🏪 {totalCount}</span>
