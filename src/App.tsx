@@ -460,7 +460,7 @@ function App() {
     try {
       // 1. 调用后端API触发飞书数据同步
       console.log('🔄 开始手动同步飞书数据...');
-      const apiUrl = process.env.REACT_APP_API_URL || 'https://service-map-c0ql.onrender.com';
+      const apiUrl = process.env.REACT_APP_API_URL || 'https://outlet-map.onrender.com';
       const syncResponse = await fetch(`${apiUrl}/sync`, {
         method: 'POST',
         headers: {
