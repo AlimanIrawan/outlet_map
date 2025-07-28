@@ -1,5 +1,5 @@
 // Service Worker for PWA functionality
-const CACHE_NAME = 'outlet-map-v1';
+const CACHE_NAME = 'outlet-map-v2';
 const urlsToCache = [
   '/',
   '/static/js/bundle.js',
