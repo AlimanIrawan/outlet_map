@@ -1,0 +1,94 @@
+====================================
+印尼雅加达冰柜配送地图展示系统
+飞书API配置指南 v3.0
+====================================
+
+🎯 目标: 配置飞书API以实现数据自动同步
+
+📋 配置步骤:
+
+【第一步: 创建飞书应用】
+1. 访问飞书开放平台: https://open.feishu.cn/
+2. 登录你的飞书账号
+3. 点击"创建应用" → "自建应用"
+4. 填写应用信息:
+   - 应用名称: 印尼雅加达冰柜配送地图系统
+   - 应用描述: 用于同步冰柜配送数据到地图展示系统
+5. 创建完成后，记录以下信息:
+   - App ID (应用ID)
+   - App Secret (应用密钥)
+
+【第二步: 配置应用权限】
+1. 进入应用管理页面
+2. 点击"权限管理"
+3. 添加以下权限:
+   - 查看、评论、编辑和管理多维表格 (bitable:app)
+   - 查看多维表格 (bitable:app:readonly)
+4. 发布版本并等待审核通过
+
+【第三步: 获取多维表格信息】
+1. 打开你的飞书多维表格
+2. 从URL中获取 table_token:
+   例如: https://xxx.feishu.cn/base/[table_token]?table=[table_id]
+3. 获取视图ID (view_id):
+   - 在表格中点击要同步的视图
+   - 从URL中复制view_id部分
+
+【第四步: 创建GitHub个人访问令牌】
+1. 访问: https://github.com/settings/tokens
+2. 点击"Generate new token" → "Generate new token (classic)"
+3. 填写信息:
+   - Note: Jakarta Freezer Delivery Map
+   - Expiration: No expiration
+   - 勾选权限: repo (Full control of private repositories)
+4. 点击"Generate token"
+5. 复制生成的token（只显示一次）
+
+【第五步: 配置环境变量】
+1. 进入项目的 feishu-sync-service 目录
+2. 复制示例文件: cp .env.example .env
+3. 编辑 .env 文件，填入以下信息:
+
+PORT=5000
+
+FEISHU_APP_ID=你在第一步获取的App ID
+FEISHU_APP_SECRET=你在第一步获取的App Secret
+FEISHU_TABLE_TOKEN=你在第三步获取的table_token
+FEISHU_VIEW_ID=你在第三步获取的view_id
+
+GITHUB_TOKEN=你在第四步获取的GitHub token
+GITHUB_OWNER=AlimanIrawan
+GITHUB_REPO=jakarta-freezer-delivery-map
+GITHUB_FILE_PATH=public/markers.csv
+
+SYNC_INTERVAL_MINUTES=30
+AUTO_SYNC_ENABLED=true
+CORS_ORIGIN=http://localhost:3000
+
+LOG_LEVEL=info
+LOG_FILE_ENABLED=true
+
+【第六步: 验证配置】
+运行测试命令验证配置:
+cd feishu-sync-service
+npm test
+
+🚨 注意事项:
+- 所有配置信息请保密，不要提交到Git
+- 确保飞书表格中的数据列名与系统要求一致
+- GitHub token有操作仓库的权限，请妥善保管
+
+📊 数据列要求:
+飞书表格需包含以下列（区分大小写）:
+- Outlet Code
+- Nama Pemilik  
+- PIC
+- Untuk (值: "PO Freezer" 或 "Return Freezer")
+- Tanggal Kirim/Ambil (格式: YYYY/M/D)
+- Udah Anter (值: "✅" 表示完成)
+- No Telepon Pemilik
+- Nama Toko
+- longitude (经度，数字)
+- latitude (纬度，数字)
+
+完成后继续下一步: 部署到Render和Netlify 

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API连接测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #ccc;
+        }
+        .success { border-color: #4CAF50; }
+        .error { border-color: #F44336; }
+        .loading { border-color: #FF9800; }
+        pre {
+            background: #f8f8f8;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 WhatsApp客服系统 - API连接诊断</h1>
+    
+    <div id="results"></div>
+    
+    <script>
+        const results = document.getElementById('results');
+        
+        function addResult(title, status, data) {
+            const div = document.createElement('div');
+            div.className = `test-item ${status}`;
+            div.innerHTML = `
+                <h3>${title}</h3>
+                <pre>${JSON.stringify(data, null, 2)}</pre>
+            `;
+            results.appendChild(div);
+        }
+        
+        // 测试函数
+        async function testAPI() {
+            // 1. 测试健康检查
+            try {
+                addResult('🔍 正在测试健康检查 API...', 'loading', '请求中...');
+                const healthResponse = await fetch('http://localhost:3000/api/health');
+                const healthData = await healthResponse.json();
+                addResult('✅ 健康检查 API', 'success', healthData);
+            } catch (error) {
+                addResult('❌ 健康检查 API 失败', 'error', {
+                    error: error.message,
+                    type: error.name
+                });
+            }
+            
+            // 2. 测试今日统计
+            try {
+                addResult('🔍 正在测试今日统计 API...', 'loading', '请求中...');
+                const statsResponse = await fetch('http://localhost:3000/api/stats/today');
+                const statsData = await statsResponse.json();
+                addResult('📊 今日统计 API', 'success', statsData);
+            } catch (error) {
+                addResult('❌ 今日统计 API 失败', 'error', {
+                    error: error.message,
+                    type: error.name
+                });
+            }
+            
+            // 3. 显示浏览器信息
+            addResult('🌐 浏览器信息', 'success', {
+                userAgent: navigator.userAgent,
+                currentURL: window.location.href,
+                timestamp: new Date().toISOString()
+            });
+        }
+        
+        // 页面加载完成后执行测试
+        window.addEventListener('load', testAPI);
+    </script>
+</body>
+</html> 

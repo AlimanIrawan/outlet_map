@@ -1,0 +1,91 @@
+====================================
+印尼雅加达冰柜配送地图展示系统
+Render 后端部署配置指南 v3.0
+====================================
+
+🎯 目标: 将后端服务部署到Render云平台
+
+📋 部署步骤:
+
+【第一步: 登录Render】
+1. 访问: https://render.com/
+2. 使用GitHub账号登录
+3. 授权Render访问你的GitHub仓库
+
+【第二步: 创建Web Service】
+1. 点击"New" → "Web Service"
+2. 连接GitHub仓库:
+   - 选择 "AlimanIrawan/jakarta-freezer-delivery-map"
+3. 填写服务配置:
+   - Name: jakarta-freezer-map-backend
+   - Environment: Node
+   - Region: Singapore (最接近印尼)
+   - Branch: main
+   - Root Directory: feishu-sync-service
+   - Build Command: npm install
+   - Start Command: npm start
+
+【第三步: 配置环境变量】
+在"Environment"标签页添加以下环境变量:
+
+PORT=10000
+
+FEISHU_APP_ID=你的飞书应用ID
+FEISHU_APP_SECRET=你的飞书应用密钥
+FEISHU_TABLE_TOKEN=你的多维表格Token
+FEISHU_VIEW_ID=你的视图ID
+
+GITHUB_TOKEN=你的GitHub个人访问令牌
+GITHUB_OWNER=AlimanIrawan
+GITHUB_REPO=jakarta-freezer-delivery-map
+GITHUB_FILE_PATH=public/markers.csv
+
+SYNC_INTERVAL_MINUTES=30
+AUTO_SYNC_ENABLED=true
+CORS_ORIGIN=https://你的前端域名.netlify.app
+
+LOG_LEVEL=info
+LOG_FILE_ENABLED=false
+
+【第四步: 部署服务】
+1. 点击"Create Web Service"
+2. 等待构建和部署完成（约5-10分钟）
+3. 记录部署后的服务URL: https://jakarta-freezer-map-backend.onrender.com
+
+【第五步: 验证部署】
+访问以下URL验证服务运行:
+- 健康检查: https://你的服务URL/health
+- API状态: https://你的服务URL/api/config-status
+
+🔧 Render配置文件:
+如需自定义配置，可以创建 render.yaml:
+
+services:
+  - type: web
+    name: jakarta-freezer-map-backend
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    rootDir: feishu-sync-service
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+
+💰 费用说明:
+- 免费计划: 750小时/月，服务休眠后重启较慢
+- 付费计划: $7/月，服务保持运行，响应更快
+
+🚨 注意事项:
+- 免费服务15分钟无活动后会休眠
+- 环境变量中的密钥信息要保密
+- CORS_ORIGIN要设置为前端的实际域名
+- 构建失败时检查package.json和依赖项
+
+📊 监控服务:
+- Render Dashboard提供日志和监控
+- 可设置健康检查端点
+- 支持自动重新部署
+
+完成后继续: Netlify前端部署 

@@ -1,0 +1,62 @@
+====================================
+飞书API 403权限错误排查指南
+====================================
+
+🚨 当前问题: 飞书API返回403 Forbidden错误
+
+📋 排查步骤:
+
+【第一步: 检查应用状态】
+1. 访问飞书开放平台: https://open.feishu.cn/
+2. 进入你的应用管理页面
+3. 确认应用状态是否为"已发布"或"企业内可见"
+
+【第二步: 验证权限配置】
+1. 点击"权限管理"
+2. 确认已添加以下权限:
+   ✅ 查看、评论、编辑和管理多维表格 (bitable:app)
+   ✅ 查看多维表格 (bitable:app:readonly)
+3. 如果权限未生效，需要创建新版本并发布
+
+【第三步: 检查多维表格访问权限】
+1. 打开你的飞书多维表格
+2. 点击右上角"协作"按钮
+3. 确认你的应用已被添加为协作者
+4. 如果没有，手动添加应用到协作者列表
+
+【第四步: 验证Token和ID】
+请提供以下信息供检查:
+
+1. 多维表格URL格式:
+   https://xxx.feishu.cn/base/[APP_TOKEN]?table=[TABLE_ID]&view=[VIEW_ID]
+
+2. 当前配置的Token/ID是否正确:
+   - FEISHU_APP_TOKEN: 应该是bascn开头的长字符串
+   - FEISHU_TABLE_ID: 应该是tbl开头的字符串
+
+【第五步: 重新获取Token】
+如果上述都正确，尝试重新获取:
+
+1. 打开多维表格，复制完整URL
+2. 从URL中提取正确的token和table_id:
+   
+   URL示例:
+   https://feishu.cn/base/bascnXXXXXXXXXXXXXXXX?table=tblXXXXXXXXXXXXXXXX&view=vewXXXXXXXXXXXXXXXX
+   
+   提取信息:
+   - APP_TOKEN = bascnXXXXXXXXXXXXXXXX
+   - TABLE_ID = tblXXXXXXXXXXXXXXXX
+   - VIEW_ID = vewXXXXXXXXXXXXXXXX
+
+【第六步: 创建企业内应用】
+如果问题持续，建议:
+1. 创建新的"企业内应用"
+2. 直接发布为"企业内可见"（无需审核）
+3. 重新配置权限
+
+🔧 快速测试权限的方法:
+1. 使用飞书API测试工具
+2. 手动调用多维表格API
+3. 检查返回的错误详情
+
+请按照以上步骤检查后告诉我结果！ 

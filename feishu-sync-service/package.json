@@ -1,0 +1,36 @@
+{
+  "name": "feishu-bitable-delivery-sync",
+  "version": "1.0.0",
+  "description": "飞书多维表格送货数据同步服务",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "@googlemaps/google-maps-services-js": "^3.3.42",
+    "@octokit/rest": "^20.0.2",
+    "axios": "^1.6.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "node-cache": "^5.1.2",
+    "node-cron": "^3.0.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "feishu",
+    "bitable",
+    "multitable",
+    "delivery",
+    "sync",
+    "map",
+    "indonesia",
+    "route-optimization",
+    "tsp"
+  ],
+  "author": "AI Assistant",
+  "license": "MIT"
+}

@@ -1,0 +1,120 @@
+====================================
+印尼雅加达冰柜配送地图展示系统
+Netlify 前端部署配置指南 v3.0
+====================================
+
+🎯 目标: 将React前端应用部署到Netlify
+
+📋 部署步骤:
+
+【第一步: 登录Netlify】
+1. 访问: https://www.netlify.com/
+2. 使用GitHub账号登录
+3. 授权Netlify访问你的GitHub仓库
+
+【第二步: 创建新站点】
+1. 点击"Add new site" → "Import an existing project"
+2. 选择"GitHub"
+3. 选择仓库: "AlimanIrawan/jakarta-freezer-delivery-map"
+4. 配置构建设置:
+   - Branch to deploy: main
+   - Base directory: (留空，使用根目录)
+   - Build command: npm run build
+   - Publish directory: build
+
+【第三步: 配置环境变量】
+在"Site settings" → "Environment variables"添加:
+
+REACT_APP_API_URL=https://你的Render后端URL
+REACT_APP_SYNC_ENDPOINT=https://你的Render后端URL/sync
+REACT_APP_MAP_CENTER_LAT=-6.2
+REACT_APP_MAP_CENTER_LNG=106.8
+REACT_APP_MAP_ZOOM=10
+
+【第四步: 配置重定向规则】
+创建 public/_redirects 文件:
+
+# SPA路由重定向
+/*    /index.html   200
+
+# API代理（可选，如果需要）
+/api/*  https://你的Render后端URL/api/:splat  200
+
+【第五步: 部署站点】
+1. 点击"Deploy site"
+2. 等待构建完成（约3-5分钟）
+3. 记录分配的域名: https://随机名称.netlify.app
+4. 可以在"Site settings" → "General"中自定义域名
+
+【第六步: 更新后端CORS配置】
+1. 回到Render后端服务
+2. 更新环境变量 CORS_ORIGIN:
+   CORS_ORIGIN=https://你的Netlify域名.netlify.app
+3. 重新部署后端服务
+
+【第七步: 验证部署】
+访问你的Netlify域名验证:
+- 地图正常加载
+- 数据展示正常
+- 手动同步功能正常
+- 统计面板显示正确
+
+🔧 Netlify配置文件:
+可选创建 netlify.toml:
+
+[build]
+  command = "npm run build"
+  publish = "build"
+
+[build.environment]
+  NODE_VERSION = "18"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+🚀 自动部署:
+- 每次推送到main分支自动触发构建
+- 构建失败会收到邮件通知
+- 可以回滚到之前的版本
+
+💰 费用说明:
+- 免费计划: 100GB带宽/月，300分钟构建时间
+- 付费计划: $19/月起，更多功能和带宽
+
+🔧 前端配置更新:
+确保前端代码中的API端点正确:
+
+// src/App.tsx 中的 handleManualUpdate 函数
+const response = await fetch(`${process.env.REACT_APP_API_URL}/sync`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+🚨 注意事项:
+- 确保环境变量以REACT_APP_开头
+- 构建后的环境变量会被嵌入到静态文件中
+- 敏感信息不要放在前端环境变量中
+- 确保API URL使用HTTPS
+
+📊 监控和分析:
+- Netlify Analytics可以查看访问统计
+- Deploy logs显示构建详情
+- Function logs（如果使用）
+- 可以集成Google Analytics
+
+🔗 自定义域名（可选）:
+1. 在"Site settings" → "Domain management"
+2. 添加自定义域名
+3. 配置DNS记录指向Netlify
+4. 启用HTTPS（自动）
+
+完成后系统就全部部署完成了！ 
