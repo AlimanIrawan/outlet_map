@@ -153,11 +153,11 @@ async function getFeishuData() {
       console.log('=== 原始字段数据结束 ===\n');
     }
 
-    // 过滤符合条件的数据：Outlet Status为Active
+    // 过滤符合条件的数据：只检查Outlet Status为Active，包含所有记录（包括没有冰柜投放日期的）
     const filteredRecords = allRecords.filter(record => {
       const outletStatus = getFieldText(record.fields['Outlet Status']);
       
-      // 检查Outlet Status是否为Active
+      // 只检查Outlet Status是否为Active，不再过滤冰柜投放日期
       if (outletStatus !== 'Active') {
         console.log(`⚠️ 跳过非Active状态的记录: ${record.fields['Outlet Code'] || 'Unknown'} - 状态: ${outletStatus}`);
         return false;
@@ -191,10 +191,12 @@ async function getFeishuData() {
         // 如果是选项ID数组格式 ["opt5eb0nvd"]
         if (typeof field[0] === 'string') {
           // 这里我们需要将选项ID映射为实际文本
-          // 根据飞书表格的选项配置，opt5eb0nvd 对应 "Udah Pasang"
+          // 根据飞书表格的选项配置，映射选项ID到实际文本
           const optionMapping = {
-            'opt5eb0nvd': 'Udah Pasang',
-            'optXXXXXXX': '其他选项值' // 可以根据实际情况添加更多映射
+            'optJpS4dvk': 'Udah Pasang',
+            'optKNgzwtU': 'Udah kasih, belum pasang',
+            'optzNgL1Xk': 'iLang',
+            'opt5eb0nvd': 'Belum kasih, belum pasang'
           };
           return optionMapping[field[0]] || field[0]; // 如果找不到映射就返回原始ID
         }
@@ -308,11 +310,28 @@ async function getFeishuData() {
       const freezerCode = getFieldText(fields['Freezer Code']);
       // 日期字段处理完成
       
-      const spanduk = getSelectFieldText(fields['Spanduk']);
-      const flagHanger = getSelectFieldText(fields['Flag Hanger']);
-      const poster = getSelectFieldText(fields['Poster']);
-      const papanHarga = getSelectFieldText(fields['Papan Harga']);
-      const stikerHarga = getSelectFieldText(fields['Stiker Harga']);
+      // 🔍 调试原始字段数据
+      console.log(`🔍 原始字段数据 - ${outletCode}:`);
+      console.log(`  Spanduk原始:`, JSON.stringify(fields['Spanduk'], null, 2));
+      console.log(`  Flag Hanger原始:`, JSON.stringify(fields['Flag Hanger'], null, 2));
+      console.log(`  Poster原始:`, JSON.stringify(fields['Poster'], null, 2));
+      console.log(`  Papan Harga原始:`, JSON.stringify(fields['Papan Harga'], null, 2));
+      console.log(`  Stiker Harga原始:`, JSON.stringify(fields['Stiker Harga'], null, 2));
+      
+      let spanduk = getSelectFieldText(fields['Spanduk']);
+      let flagHanger = getSelectFieldText(fields['Flag Hanger']);
+      let poster = getSelectFieldText(fields['Poster']);
+      let papanHarga = getSelectFieldText(fields['Papan Harga']);
+      let stikerHarga = getSelectFieldText(fields['Stiker Harga']);
+      
+
+      
+      console.log(`🔍 映射后数据 - ${outletCode}:`);
+      console.log(`  Spanduk映射: ${spanduk}`);
+      console.log(`  Flag Hanger映射: ${flagHanger}`);
+      console.log(`  Poster映射: ${poster}`);
+      console.log(`  Papan Harga映射: ${papanHarga}`);
+      console.log(`  Stiker Harga映射: ${stikerHarga}`);
       const lastService = getDateFieldText(fields['Last Service']);
       const lastBungaEs = getDateFieldText(fields['Last Bunga Es']);
       const latitude = parseFloat(getFieldText(fields['latitude']));
@@ -398,9 +417,48 @@ async function getFeishuData() {
 // 生成CSV内容 - 更新为25字段格式
 function generateCSV(data) {
   const headers = 'Outlet Code,Nama Pemilik,Tanggal Join,Type,Toko Type,Event,Contract Sign,Tanggal Turun Freezer,Tanggal First PO EsKrim,DUS per Day,Total Value IDR,Total DUS,PO berapa Kali,PO Frequency,Freezer Code,Spanduk,Flag Hanger,Poster,Papan Harga,Stiker Harga,Last Service,Last Bunga Es,latitude,longitude,Outlet Status';
+  
+  // 辅助函数：正确转义CSV字段
+  function escapeCSVField(field) {
+    if (field === null || field === undefined) {
+      return '""';
+    }
+    
+    const str = String(field);
+    // 所有字段都用双引号包围，并转义内部的双引号
+    return '"' + str.replace(/"/g, '""') + '"';
+  }
+  
   const rows = data.map(item => {
-    return `"${item.outletCode}","${item.namaPemilik}","${item.tanggalJoin}","${item.type}","${item.tokoType}","${item.event}","${item.contractSign}","${item.tanggalTurunFreezer}","${item.tanggalFirstPOEsKrim}","${item.dusPerDay}","${item.totalValueIDR}","${item.totalDUS}","${item.poBerapaKali}","${item.poFrequency}","${item.freezerCode}","${item.spanduk}","${item.flagHanger}","${item.poster}","${item.papanHarga}","${item.stikerHarga}","${item.lastService}","${item.lastBungaEs}",${item.latitude},${item.longitude},"${item.outletStatus}"`;
+    return [
+      escapeCSVField(item.outletCode),
+      escapeCSVField(item.namaPemilik),
+      escapeCSVField(item.tanggalJoin),
+      escapeCSVField(item.type),
+      escapeCSVField(item.tokoType),
+      escapeCSVField(item.event),
+      escapeCSVField(item.contractSign),
+      escapeCSVField(item.tanggalTurunFreezer),
+      escapeCSVField(item.tanggalFirstPOEsKrim),
+      escapeCSVField(item.dusPerDay),
+      escapeCSVField(item.totalValueIDR),
+      escapeCSVField(item.totalDUS),
+      escapeCSVField(item.poBerapaKali),
+      escapeCSVField(item.poFrequency),
+      escapeCSVField(item.freezerCode),
+      escapeCSVField(item.spanduk),
+      escapeCSVField(item.flagHanger),
+      escapeCSVField(item.poster),
+      escapeCSVField(item.papanHarga),
+      escapeCSVField(item.stikerHarga),
+      escapeCSVField(item.lastService),
+      escapeCSVField(item.lastBungaEs),
+      escapeCSVField(item.latitude),
+      escapeCSVField(item.longitude),
+      escapeCSVField(item.outletStatus)
+    ].join(',');
   });
+  
   return [headers, ...rows].join('\n');
 }
 
@@ -435,6 +493,11 @@ async function updateGitHubCSV(csvContent) {
     const today = getTodayDateString();
     const message = `🚚 更新送货数据 - ${today}`;
 
+    // 🔍 调试：检查当前文件内容
+    console.log(`🔍 当前文件SHA: ${sha}`);
+    console.log(`🔍 新文件大小: ${csvContent.length} 字符`);
+    console.log(`🔍 新文件前100字符: ${csvContent.substring(0, 100)}...`);
+    
     // 更新或创建文件
     const updateResult = await octokit.rest.repos.createOrUpdateFileContents({
       owner: GITHUB_REPO_OWNER,
@@ -447,6 +510,11 @@ async function updateGitHubCSV(csvContent) {
 
     console.log('✅ GitHub CSV文件更新成功');
     console.log(`📄 文件大小: ${csvContent.length} 字符`);
+    console.log(`🔍 GitHub API响应:`, JSON.stringify({
+      commit: updateResult.data.commit?.sha,
+      content: updateResult.data.content?.sha,
+      message: updateResult.data.commit?.message
+    }, null, 2));
     return updateResult;
   } catch (error) {
     if (error.status === 403) {
@@ -473,6 +541,24 @@ async function updateGitHubCSV(csvContent) {
   }
 }
 
+// 保存本地CSV文件
+function saveLocalCSV(csvContent) {
+  const fs = require('fs');
+  const path = require('path');
+  
+  try {
+    // 保存到项目根目录
+    const localPath = path.join(__dirname, '..', 'delivery_locations.csv');
+    fs.writeFileSync(localPath, csvContent, 'utf8');
+    console.log(`💾 本地CSV文件已保存: ${localPath}`);
+    console.log(`📄 文件大小: ${csvContent.length} 字符`);
+    return true;
+  } catch (error) {
+    console.error('❌ 保存本地CSV文件失败:', error.message);
+    return false;
+  }
+}
+
 // 执行同步任务
 async function syncData() {
   try {
@@ -490,6 +576,9 @@ async function syncData() {
     } else {
       console.log(`✅ 有效的送货地点: ${data.length} 个`);
     }
+    
+    // 保存本地CSV文件
+    saveLocalCSV(csvContent);
     
     // 更新GitHub仓库
     await updateGitHubCSV(csvContent);
@@ -564,6 +653,69 @@ app.get('/debug/feishu-raw', async (req, res) => {
         sampleRecords: sampleRecords,
         todayDate: getTodayDateString(),
         explanation: "检查 tanggalValue 和 tanggalType 来了解时间戳格式"
+      });
+    } else {
+      res.status(500).json({ error: `飞书API错误: ${response.data.msg}` });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message, stack: error.stack });
+  }
+});
+
+// 调试端点 - 查看特定记录的详细信息
+app.get('/debug/record/:outletCode', async (req, res) => {
+  try {
+    const { outletCode } = req.params;
+    const token = await getFeishuAccessToken();
+    
+    // 获取所有记录并查找特定的outlet code
+    const url = `https://open.feishu.cn/open-apis/bitable/v1/apps/${FEISHU_APP_TOKEN}/tables/${FEISHU_TABLE_ID}/records`;
+    const response = await axios.get(url, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      params: {
+        page_size: 500  // 获取更多记录
+      },
+      timeout: 15000
+    });
+    
+    if (response.data.code === 0) {
+      const records = response.data.data.items || [];
+      const targetRecord = records.find(record => record.fields['Outlet Code'] === outletCode);
+      
+      if (!targetRecord) {
+        return res.status(404).json({ error: `未找到记录: ${outletCode}` });
+      }
+      
+      // 详细分析目标记录
+      const recordDetails = {
+        recordId: targetRecord.record_id,
+        outletCode: targetRecord.fields['Outlet Code'],
+        namaPemilik: targetRecord.fields['Nama Pemilik'],
+        spandukRaw: targetRecord.fields['Spanduk'],
+        flagHangerRaw: targetRecord.fields['Flag Hanger'],
+        posterRaw: targetRecord.fields['Poster'],
+        papanHargaRaw: targetRecord.fields['Papan Harga'],
+        stikerHargaRaw: targetRecord.fields['Stiker Harga'],
+        spandukMapped: getSelectFieldText(targetRecord.fields['Spanduk']),
+        flagHangerMapped: getSelectFieldText(targetRecord.fields['Flag Hanger']),
+        posterMapped: getSelectFieldText(targetRecord.fields['Poster']),
+        papanHargaMapped: getSelectFieldText(targetRecord.fields['Papan Harga']),
+        stikerHargaMapped: getSelectFieldText(targetRecord.fields['Stiker Harga']),
+        allFields: targetRecord.fields
+      };
+      
+      res.json({
+        message: `记录 ${outletCode} 的详细信息`,
+        record: recordDetails,
+        mappingTable: {
+           'optJpS4dvk': 'Udah Pasang',
+           'optKNgzwtU': 'Udah kasih, belum pasang',
+           'optzNgL1Xk': 'iLang',
+           'opt5eb0nvd': 'Belum kasih, belum pasang'
+         }
       });
     } else {
       res.status(500).json({ error: `飞书API错误: ${response.data.msg}` });
