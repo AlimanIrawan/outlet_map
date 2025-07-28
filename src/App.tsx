@@ -7,9 +7,9 @@ import L from 'leaflet';
 // 修复leaflet图标问题
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-  iconUrl: require('leaflet/dist/images/marker-icon.png'),
-  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
 });
 
 // 创建总部自定义图标
@@ -35,7 +35,7 @@ const headquartersIcon = new L.Icon({
   iconSize: [60, 60],
   iconAnchor: [30, 30],
   popupAnchor: [0, -30],
-  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
   shadowSize: [60, 60],
   shadowAnchor: [20, 30]
 });
@@ -421,11 +421,11 @@ function App() {
       setLoading(true);
       setError(null);
       
-      // 从GitHub仓库直接读取CSV数据
-      const response = await fetch('https://raw.githubusercontent.com/AlimanIrawan/outlet_map/main/public/markers.csv');
+      // 暂时使用本地CSV文件，等GitHub API配置完成后再切换
+      const response = await fetch(`${process.env.PUBLIC_URL || ''}/markers.csv`);
       
       if (!response.ok) {
-        throw new Error(`加载数据失败: ${response.status} - 请检查GitHub仓库访问权限`);
+        throw new Error(`加载数据失败: ${response.status} - 请检查数据文件`);
       }
       
       const csvText = await response.text();

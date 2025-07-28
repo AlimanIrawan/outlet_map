@@ -40,8 +40,10 @@ GITHUB_OWNER=AlimanIrawan
 GITHUB_REPO=jakarta-freezer-delivery-map
 GITHUB_FILE_PATH=public/markers.csv
 
-SYNC_INTERVAL_MINUTES=30
-AUTO_SYNC_ENABLED=true
+# 注意：不再需要以下配置，系统已改为固定策略
+# SYNC_INTERVAL_MINUTES=30  # 已移除
+# AUTO_SYNC_ENABLED=true    # 已移除
+# 新策略：每日凌晨2点自动同步 + 手动刷新
 CORS_ORIGIN=https://你的前端域名.netlify.app
 
 LOG_LEVEL=info
@@ -88,4 +90,4 @@ services:
 - 可设置健康检查端点
 - 支持自动重新部署
 
-完成后继续: Netlify前端部署 
+完成后继续: Netlify前端部署

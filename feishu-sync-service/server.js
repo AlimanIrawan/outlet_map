@@ -433,6 +433,17 @@ async function syncData() {
   }
 }
 
+// 定时任务配置 - 每日凌晨2点自动同步
+cron.schedule('0 2 * * *', async () => {
+  console.log('\n⏰ 定时任务触发 - 每日凌晨2点自动同步');
+  console.log(`🕐 当前时间: ${new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Jakarta' })}`);
+  await syncData();
+}, {
+  timezone: 'Asia/Jakarta'
+});
+
+console.log('⏰ 定时任务已设置: 每日凌晨2点(雅加达时间)自动同步');
+
 // 健康检查端点
 app.get('/health', (req, res) => {
     res.json({
@@ -440,7 +451,8 @@ app.get('/health', (req, res) => {
         timestamp: new Date().toISOString(),
         timezone: 'Asia/Jakarta',
         version: '3.0.0', // 简化版本
-        features: ['data_sync', 'feishu_integration'] // 简化功能列表
+        features: ['data_sync', 'feishu_integration'], // 简化功能列表
+        sync_schedule: '每日凌晨2点自动同步 + 手动刷新'
     });
 });
 
@@ -1022,7 +1034,7 @@ app.get('/', (req, res) => {
     status: 'running',
     currentTime: jakartaTime,
     timezone: 'Asia/Jakarta (UTC+7)',
-    schedule: '每日 09:00 和 14:00 自动同步',
+    schedule: '每日凌晨2点自动同步 + 手动刷新',
     lastSync: '查看日志了解详情',
     features: {
       data_sync: '飞书数据同步',
@@ -1041,7 +1053,8 @@ app.get('/', (req, res) => {
 console.log('🌟 印尼送货数据同步服务启动中...');
 console.log('🔗 手动同步: POST /sync');
 console.log('❤️ 健康检查: GET /health');
-console.log('⚡ 自动定时同步已禁用，仅支持手动刷新');
+console.log('⏰ 同步策略: 每日凌晨2点自动同步 + 手动刷新');
+console.log('🚫 已禁用频繁自动同步，避免不必要的资源消耗');
 
 app.listen(PORT, () => {
   console.log(`🚀 服务运行在端口 ${PORT}`);
