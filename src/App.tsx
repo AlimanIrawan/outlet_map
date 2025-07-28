@@ -786,12 +786,35 @@ function App() {
   );
 }
 
-// CSV解析函数 - 严格要求25字段格式
+// CSV解析函数 - 严格要求25字段格式，正确处理包含逗号的引号字段
 const parseCSV = (csvText: string): MarkerData[] => {
   const lines = csvText.trim().split('\n');
   if (lines.length < 2) return [];
 
-  const headers = lines[0].split(',');
+  // 正确解析CSV行，处理引号内的逗号
+  const parseCSVLine = (line: string): string[] => {
+    const result: string[] = [];
+    let current = '';
+    let inQuotes = false;
+    
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      
+      if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if (char === ',' && !inQuotes) {
+        result.push(current.trim());
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    
+    result.push(current.trim());
+    return result;
+  };
+
+  const headers = parseCSVLine(lines[0]);
   const markers: MarkerData[] = [];
 
   console.log('📊 解析25字段数据格式中... (更新时间: ' + new Date().toLocaleString() + ')');
@@ -808,7 +831,7 @@ const parseCSV = (csvText: string): MarkerData[] => {
   console.log('✅ 检测到正确的25字段格式');
 
   for (let i = 1; i < lines.length; i++) {
-    const values = lines[i].split(',');
+    const values = parseCSVLine(lines[i]);
     
     // 严格要求25字段
     if (values.length < 25) {
