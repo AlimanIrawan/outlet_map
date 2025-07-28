@@ -237,50 +237,55 @@ async function getFeishuData() {
 
     console.log(`🎯 筛选出符合条件的记录: ${filteredRecords.length} 条`);
 
-    // 转换为CSV格式的数据
+    // 转换为CSV格式的数据 - 更新为25字段格式
     const csvData = filteredRecords.map(record => {
       const fields = record.fields;
       
-      // 提取新的字段结构 - 匹配新的数据格式
+      // 提取25字段结构 - 匹配新的数据格式
       const outletCode = getFieldText(fields['Outlet Code']);
       const namaPemilik = getFieldText(fields['Nama Pemilik']);
-      const mingguIniServiceBy = getDateFieldText(fields['Hari Service Minggu Ini']);
+      const tanggalJoin = getDateFieldText(fields['Tanggal Join']);
+      const type = getFieldText(fields['Type']);
+      const tokoType = getFieldText(fields['Toko Type']);
+      const event = getFieldText(fields['Event']);
+      const contractSign = getDateFieldText(fields['Contract Sign']);
       const tanggalTurunFreezer = getDateFieldText(fields['Tanggal Turun Freezer']);
-      const noTeleponPemilik = getPhoneNumber(fields['No Telepon Pemilik']);
-      const visit = getFieldText(fields['Visit']);
-      const po = getFieldText(fields['PO']);
-      const buangEs = getFieldText(fields['BuangEs']);
-      const outletStatus = getFieldText(fields['Outlet Status']);
-      const longitude = parseFloat(getFieldText(fields['longitude']));
+      const tanggalFirstPOEsKrim = getDateFieldText(fields['Tanggal First PO EsKrim']);
+      const dusPerDay = getFieldText(fields['DUS per Day']);
+      const totalValueIDR = getFieldText(fields['Total Value IDR']);
+      const totalDUS = getFieldText(fields['Total DUS']);
+      const poBerapaKali = getFieldText(fields['PO berapa Kali']);
+      const poFrequency = getFieldText(fields['PO Frequency']);
+      const freezerCode = getFieldText(fields['Freezer Code']);
+      const spanduk = getFieldText(fields['Spanduk']);
+      const flagHanger = getFieldText(fields['Flag Hanger']);
+      const poster = getFieldText(fields['Poster']);
+      const papanHarga = getFieldText(fields['Papan Harga']);
+      const stikerHarga = getFieldText(fields['Stiker Harga']);
+      const lastService = getDateFieldText(fields['Last Service']);
+      const lastBungaEs = getDateFieldText(fields['Last Bunga Es']);
       const latitude = parseFloat(getFieldText(fields['latitude']));
+      const longitude = parseFloat(getFieldText(fields['longitude']));
+      const outletStatus = getFieldText(fields['Outlet Status']);
       
-      // 🔍 详细调试"Hari Service Minggu Ini"字段（日期格式）
+      // 🔍 详细调试25字段数据
       console.log(`\n🔍 === 记录详情分析: ${outletCode} ===`);
-      console.log(`📋 原始字段数据:`, JSON.stringify(fields['Hari Service Minggu Ini'], null, 2));
-      console.log(`📅 处理后的日期值: "${mingguIniServiceBy}"`);
-      console.log(`📏 字符串长度: ${mingguIniServiceBy.length}`);
-      console.log(`🔤 字符串类型: ${typeof mingguIniServiceBy}`);
-      
-      // 检查是否为空或只包含空白字符
-      if (!mingguIniServiceBy || mingguIniServiceBy.trim() === '') {
-        console.log(`⚠️ 警告: "Hari Service Minggu Ini"日期字段为空!`);
-        console.log(`🔍 检查其他可能的字段名:`);
-        const possibleFields = ['PIC', 'Service by', 'Minggu Service by', 'Service Person', 'Petugas'];
-        possibleFields.forEach(fieldName => {
-          if (fields[fieldName]) {
-            console.log(`  - 找到字段 "${fieldName}": ${JSON.stringify(fields[fieldName])}`);
-          }
-        });
-      } else {
-        console.log(`✅ "Hari Service Minggu Ini"日期字段有值: "${mingguIniServiceBy}"`);
-      }
-      
-      // 详细调试输出
-      console.log(`  - 经纬度: lat=${latitude}, lng=${longitude}`);
-      console.log(`  - 店主: ${namaPemilik}, 服务人员: ${mingguIniServiceBy}`);
-      console.log(`  - 电话: ${noTeleponPemilik}, 状态: ${outletStatus}`);
-      console.log(`  - 冰柜日期: ${tanggalTurunFreezer}, 访问: ${visit}`);
-      console.log(`  - PO: ${po}, 倒冰: ${buangEs}`);
+      console.log(`📋 店主: ${namaPemilik}`);
+      console.log(`📅 加入日期: ${tanggalJoin}`);
+      console.log(`🏪 类型: ${type}, 店铺类型: ${tokoType}`);
+      console.log(`📝 事件: ${event}`);
+      console.log(`📄 合同签署: ${contractSign}`);
+      console.log(`❄️ 冰柜下放: ${tanggalTurunFreezer}`);
+      console.log(`🍦 首次PO: ${tanggalFirstPOEsKrim}`);
+      console.log(`📦 每日DUS: ${dusPerDay}, 总价值: ${totalValueIDR}`);
+      console.log(`📊 总DUS: ${totalDUS}, PO次数: ${poBerapaKali}`);
+      console.log(`⏰ PO频率: ${poFrequency}`);
+      console.log(`🧊 冰柜代码: ${freezerCode}`);
+      console.log(`🎯 营销物料: 横幅=${spanduk}, 旗帜=${flagHanger}, 海报=${poster}`);
+      console.log(`💰 价格物料: 价格牌=${papanHarga}, 价格贴=${stikerHarga}`);
+      console.log(`🔧 最后服务: ${lastService}, 最后除冰: ${lastBungaEs}`);
+      console.log(`📍 经纬度: lat=${latitude}, lng=${longitude}`);
+      console.log(`✅ 状态: ${outletStatus}`);
       console.log(`=== 记录分析结束 ===\n`);
       
       // 如果经纬度无效，跳过此记录
@@ -292,14 +297,28 @@ async function getFeishuData() {
       return {
         outletCode: outletCode || '',
         namaPemilik: namaPemilik || '',
-        mingguIniServiceBy: mingguIniServiceBy || '',
+        tanggalJoin: tanggalJoin || '',
+        type: type || '',
+        tokoType: tokoType || '',
+        event: event || '',
+        contractSign: contractSign || '',
         tanggalTurunFreezer: tanggalTurunFreezer || '',
+        tanggalFirstPOEsKrim: tanggalFirstPOEsKrim || '',
+        dusPerDay: dusPerDay || '',
+        totalValueIDR: totalValueIDR || '',
+        totalDUS: totalDUS || '',
+        poBerapaKali: poBerapaKali || '',
+        poFrequency: poFrequency || '',
+        freezerCode: freezerCode || '',
+        spanduk: spanduk || '',
+        flagHanger: flagHanger || '',
+        poster: poster || '',
+        papanHarga: papanHarga || '',
+        stikerHarga: stikerHarga || '',
+        lastService: lastService || '',
+        lastBungaEs: lastBungaEs || '',
         latitude: latitude,
         longitude: longitude,
-        noTeleponPemilik: noTeleponPemilik || '',
-        visit: visit || '',
-        po: po || '',
-        buangEs: buangEs || '',
         outletStatus: outletStatus || ''
       };
     }).filter(record => record !== null); // 过滤掉无效记录
@@ -325,11 +344,11 @@ async function getFeishuData() {
   }
 }
 
-// 生成CSV内容 - 更新为新的数据格式
+// 生成CSV内容 - 更新为25字段格式
 function generateCSV(data) {
-  const headers = 'Outlet Code,Nama Pemilik,Hari Service Minggu Ini,Tanggal Turun Freezer,latitude,longitude,No Telepon Pemilik,Visit,PO,BuangEs,Outlet Status';
+  const headers = 'Outlet Code,Nama Pemilik,Tanggal Join,Type,Toko Type,Event,Contract Sign,Tanggal Turun Freezer,Tanggal First PO EsKrim,DUS per Day,Total Value IDR,Total DUS,PO berapa Kali,PO Frequency,Freezer Code,Spanduk,Flag Hanger,Poster,Papan Harga,Stiker Harga,Last Service,Last Bunga Es,latitude,longitude,Outlet Status';
   const rows = data.map(item => {
-    return `"${item.outletCode}","${item.namaPemilik}","${item.mingguIniServiceBy}","${item.tanggalTurunFreezer}",${item.latitude},${item.longitude},"${item.noTeleponPemilik}","${item.visit}","${item.po}","${item.buangEs}","${item.outletStatus}"`;
+    return `"${item.outletCode}","${item.namaPemilik}","${item.tanggalJoin}","${item.type}","${item.tokoType}","${item.event}","${item.contractSign}","${item.tanggalTurunFreezer}","${item.tanggalFirstPOEsKrim}","${item.dusPerDay}","${item.totalValueIDR}","${item.totalDUS}","${item.poBerapaKali}","${item.poFrequency}","${item.freezerCode}","${item.spanduk}","${item.flagHanger}","${item.poster}","${item.papanHarga}","${item.stikerHarga}","${item.lastService}","${item.lastBungaEs}",${item.latitude},${item.longitude},"${item.outletStatus}"`;
   });
   return [headers, ...rows].join('\n');
 }
