@@ -1,7 +1,7 @@
 {
-  "name": "freezer-delivery-map-system",
+  "name": "outlet-map",
   "version": "0.1.0",
-  "description": "印尼地图标注系统",
+  "description": "店铺地图系统",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.4",
@@ -45,4 +45,4 @@
     ]
   },
   "homepage": "."
-} 
+}

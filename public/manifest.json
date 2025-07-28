@@ -1,6 +1,6 @@
 {
   "short_name": "店铺地图",
-  "name": "店铺地图系统",
+  "name": "店铺地图",
   "icons": [
     {
       "src": "favicon.ico",
@@ -20,12 +20,12 @@
       "purpose": "any maskable"
     }
   ],
-  "start_url": "/?v=4",
+  "start_url": "/?v=5",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "theme_color": "#28a745",
-  "background_color": "#ffffff",
+  "theme_color": "#007bff",
+  "background_color": "#f8f9fa",
   "categories": ["business", "productivity", "utilities"],
   "lang": "zh-CN",
   "dir": "ltr"
