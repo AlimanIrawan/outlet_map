@@ -421,8 +421,14 @@ function App() {
       setLoading(true);
       setError(null);
       
-      // 从GitHub读取最新的CSV数据
-      const response = await fetch('https://raw.githubusercontent.com/AlimanIrawan/outlet_map/main/public/markers.csv');
+      // 从GitHub读取最新的CSV数据，添加时间戳避免缓存
+      const timestamp = new Date().getTime();
+      const response = await fetch(`https://raw.githubusercontent.com/AlimanIrawan/outlet_map/main/public/markers.csv?t=${timestamp}`, {
+        cache: 'no-cache',
+        headers: {
+          'Cache-Control': 'no-cache'
+        }
+      });
       
       if (!response.ok) {
         throw new Error(`加载数据失败: ${response.status} - 请检查数据文件`);
