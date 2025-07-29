@@ -300,6 +300,35 @@ tbody tr:last-child td {
   transform: none;
 }
 
+.button-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.sync-btn-small {
+  background: linear-gradient(135deg, #27ae60, #229954);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
+}
+
+.sync-btn-small:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
+}
+
+.sync-btn-small:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .error-message-small {
   background: linear-gradient(135deg, #e74c3c, #c0392b);
   color: white;

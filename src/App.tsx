@@ -452,6 +452,41 @@ function App() {
     loadData();
   };
 
+  // 同步飞书数据
+  const [isSyncing, setIsSyncing] = useState(false);
+  const handleSyncData = async () => {
+    try {
+      setIsSyncing(true);
+      setError(null);
+      
+      // 调用后端API触发飞书数据同步
+      const response = await fetch('https://outlet-sync-service.onrender.com/sync', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`同步失败: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      console.log('同步结果:', result);
+      
+      // 等待一段时间让数据更新完成，然后重新加载
+      setTimeout(() => {
+        loadData();
+      }, 3000);
+      
+    } catch (error) {
+      console.error('同步数据失败:', error);
+      setError('同步数据失败，请稍后重试');
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
   // 组件加载时获取数据
   useEffect(() => {
     loadData();
@@ -498,13 +533,24 @@ function App() {
       <div className="stats-panel">
         <div className="panel-header">
           <h2>店铺统计</h2>
-          <button 
-            onClick={handleRefresh} 
-            disabled={loading}
-            className="refresh-btn-small"
-          >
-            {loading ? '⏳' : '🔄'}
-          </button>
+          <div className="button-group">
+            <button 
+              onClick={handleRefresh} 
+              disabled={loading}
+              className="refresh-btn-small"
+              title="刷新地图数据"
+            >
+              {loading ? '⏳' : '🔄'}
+            </button>
+            <button 
+              onClick={handleSyncData} 
+              disabled={isSyncing || loading}
+              className="sync-btn-small"
+              title="从飞书同步最新数据"
+            >
+              {isSyncing ? '⏳' : '🔄📊'}
+            </button>
+          </div>
         </div>
         
         {error && (
