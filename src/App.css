@@ -42,7 +42,7 @@ body {
 }
 
 .refresh-btn {
-  background: linear-gradient(135deg, #007bff, #0056b3);
+  background: linear-gradient(135deg, #228B22, #1e7e1e);
   color: white;
   border: none;
   padding: 12px 24px;
@@ -51,13 +51,13 @@ body {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+  box-shadow: 0 2px 8px rgba(34, 139, 34, 0.3);
 }
 
 .refresh-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #0056b3, #004085);
+  background: linear-gradient(135deg, #1e7e1e, #196619);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+  box-shadow: 0 4px 12px rgba(34, 139, 34, 0.4);
 }
 
 .refresh-btn:disabled {
@@ -282,7 +282,7 @@ tbody tr:last-child td {
 }
 
 .refresh-btn-small {
-  background: linear-gradient(135deg, #3498db, #2980b9);
+  background: linear-gradient(135deg, #228B22, #1e7e1e);
   color: white;
   border: none;
   border-radius: 8px;
@@ -290,12 +290,12 @@ tbody tr:last-child td {
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+  box-shadow: 0 2px 8px rgba(34, 139, 34, 0.3);
 }
 
 .refresh-btn-small:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+  box-shadow: 0 4px 12px rgba(34, 139, 34, 0.4);
 }
 
 .refresh-btn-small:disabled {
@@ -388,8 +388,8 @@ tbody tr:last-child td {
 }
 
 .stat-item.active {
-  border: 2px solid #007bff;
-  box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+  border: 2px solid #228B22;
+  box-shadow: 0 0 10px rgba(34, 139, 34, 0.3);
 }
 
 .stat-item.green.active {
@@ -524,7 +524,7 @@ tbody tr:last-child td {
 
 .view-toggle-btn:hover {
   background: #f8f9fa;
-  border-color: #007bff;
+  border-color: #228B22;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
@@ -535,8 +535,8 @@ tbody tr:last-child td {
 }
 
 .view-toggle-btn.satellite {
-  color: #007bff;
-  border-color: #007bff;
+  color: #228B22;
+  border-color: #228B22;
 }
 
 .view-toggle-btn.map:hover {
@@ -545,8 +545,8 @@ tbody tr:last-child td {
 }
 
 .view-toggle-btn.satellite:hover {
-  background: #e3f2fd;
-  border-color: #007bff;
+  background: #e8f5e8;
+  border-color: #228B22;
 }
 
 /* 定位按钮 */
@@ -772,7 +772,7 @@ tbody tr:last-child td {
 
 .type-filter-btn:hover {
   background: #f8f9fa;
-  border-color: #007bff;
+  border-color: #228B22;
   transform: translateY(-2px);
   box-shadow: 0 4px 15px rgba(0,0,0,0.15);
 }
