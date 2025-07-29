@@ -447,11 +447,6 @@ function App() {
     }
   }, [typeFilter]);
 
-  // 手动刷新数据
-  const handleRefresh = () => {
-    loadData();
-  };
-
   // 同步飞书数据
   const [isSyncing, setIsSyncing] = useState(false);
   const handleSyncData = async () => {
