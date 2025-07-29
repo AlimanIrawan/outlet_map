@@ -459,7 +459,7 @@ function generateCSV(data) {
     ].join(',');
   });
   
-  return [headers, ...rows].join('\n');
+  return [headers, ...rows].join('\n') + '\n';
 }
 
 

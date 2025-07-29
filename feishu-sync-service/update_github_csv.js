@@ -87,11 +87,30 @@ async function updateGitHubCSV(csvContent) {
 // 主函数
 async function main() {
   try {
-    // 读取本地CSV文件
-    const csvPath = path.join(__dirname, '..', 'delivery_locations.csv');
-    const csvContent = fs.readFileSync(csvPath, 'utf8');
+    // 从GitHub读取当前CSV文件内容
+    let csvContent = '';
+    try {
+      const { data: currentFile } = await octokit.rest.repos.getContent({
+        owner: GITHUB_REPO_OWNER,
+        repo: GITHUB_REPO_NAME,
+        path: 'public/markers.csv',
+      });
+      csvContent = Buffer.from(currentFile.content, 'base64').toString('utf8');
+      console.log('📖 从GitHub读取CSV文件成功');
+    } catch (error) {
+      if (error.status === 404) {
+        console.log('📝 GitHub上文件不存在，将使用空内容');
+        csvContent = '';
+      } else {
+        throw error;
+      }
+    }
     
-    console.log('📖 读取本地CSV文件成功');
+    // 确保CSV内容以换行符结尾
+    if (csvContent && !csvContent.endsWith('\n')) {
+      csvContent += '\n';
+    }
+    
     console.log(`📄 文件大小: ${csvContent.length} 字符`);
     
     // 更新GitHub
