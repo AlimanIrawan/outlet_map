@@ -5,6 +5,16 @@
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#007bff" />
+    <!-- 超强力禁用缓存策略 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="-1" />
+    <meta http-equiv="Last-Modified" content="0" />
+    <meta http-equiv="If-Modified-Since" content="0" />
+    <meta http-equiv="If-None-Match" content="*" />
+    <meta name="cache-control" content="no-cache" />
+    <meta name="expires" content="0" />
+    <meta name="pragma" content="no-cache" />
     <meta
       name="description"
       content="店铺地图 - 店铺服务状态地图"
@@ -14,6 +24,63 @@
     <link rel="icon" type="image/png" sizes="512x512" href="%PUBLIC_URL%/icon-512.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <title>店铺地图</title>
+    <script>
+      // 超强力缓存禁用脚本
+      (function() {
+        // 禁用浏览器缓存
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations().then(function(registrations) {
+            for(let registration of registrations) {
+              registration.unregister();
+            }
+          });
+        }
+        
+        // 清理所有存储
+        try {
+          localStorage.clear();
+          sessionStorage.clear();
+        } catch(e) {}
+        
+        // 强制添加时间戳到URL
+        var currentUrl = new URL(window.location.href);
+        var timestamp = Date.now();
+        currentUrl.searchParams.set('_t', timestamp);
+        currentUrl.searchParams.set('_nocache', 'true');
+        
+        if (window.location.href !== currentUrl.toString()) {
+          window.history.replaceState({}, '', currentUrl.toString());
+        }
+        
+        // 监听页面加载事件
+        window.addEventListener('load', function() {
+          // 强制刷新所有资源
+          var links = document.querySelectorAll('link');
+          links.forEach(function(link) {
+            if (link.href) {
+              var url = new URL(link.href);
+              url.searchParams.set('v', timestamp);
+              link.href = url.toString();
+            }
+          });
+        });
+        
+        // 禁用页面缓存
+        window.addEventListener('beforeunload', function() {
+          try {
+            localStorage.clear();
+            sessionStorage.clear();
+          } catch(e) {}
+        });
+        
+        // 检测页面是否从缓存加载
+        window.addEventListener('pageshow', function(event) {
+          if (event.persisted) {
+            window.location.reload(true);
+          }
+        });
+      })();
+    </script>
   </head>
   <body>
     <noscript>请启用JavaScript来运行此应用程序。</noscript>
