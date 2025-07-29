@@ -445,7 +445,7 @@ function App() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [typeFilter]);
 
   // 手动刷新数据
   const handleRefresh = () => {
