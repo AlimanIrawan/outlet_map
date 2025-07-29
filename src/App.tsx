@@ -455,10 +455,10 @@ function App() {
       setIsSyncing(true);
       setError(null);
       
-      console.log('📡 开始发送API请求到:', 'https://feishu-delivery-sync.onrender.com/sync');
+      console.log('📡 开始发送API请求到:', 'https://outlet-map.onrender.com/sync');
       
       // 调用后端API触发飞书数据同步
-      const response = await fetch('https://feishu-delivery-sync.onrender.com/sync', {
+      const response = await fetch('https://outlet-map.onrender.com/sync', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
