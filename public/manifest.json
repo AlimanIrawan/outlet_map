@@ -1,6 +1,6 @@
 {
-  "short_name": "店铺地图",
-  "name": "店铺地图",
+  "short_name": "印尼店铺地图",
+  "name": "印尼店铺配送地图",
   "icons": [
     {
       "src": "favicon.ico",
@@ -11,16 +11,16 @@
       "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ],
-  "start_url": "/?v=5",
+  "start_url": "/?app=outlet_map&v=5",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
