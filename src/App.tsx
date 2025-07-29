@@ -378,9 +378,9 @@ function App() {
       setLoading(true);
       setError(null);
       
-      // 从GitHub仓库读取CSV数据
+      // 从Netlify部署的静态文件读取CSV数据
       const timestamp = new Date().getTime();
-      const response = await fetch(`https://raw.githubusercontent.com/AlimanIrawan/outlet_map/main/public/markers.csv?t=${timestamp}`, {
+      const response = await fetch(`/markers.csv?t=${timestamp}`, {
         cache: 'no-cache',
         headers: {
           'Cache-Control': 'no-cache, no-store, must-revalidate',
