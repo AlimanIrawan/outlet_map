@@ -459,7 +459,10 @@ function generateCSV(data) {
     ].join(',');
   });
   
-  return [headers, ...rows].join('\n') + '\n';
+  // 确保CSV文件以换行符结尾，避免解析问题
+  const csvContent = [headers, ...rows].join('\n');
+  // 明确添加最终换行符
+  return csvContent + '\n';
 }
 
 

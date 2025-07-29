@@ -426,9 +426,13 @@ function App() {
       const response = await fetch(`https://raw.githubusercontent.com/AlimanIrawan/outlet_map/main/public/markers.csv?t=${timestamp}`, {
         cache: 'no-cache',
         headers: {
-          'Cache-Control': 'no-cache'
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
         }
       });
+      
+      console.log('🌐 正在从GitHub获取数据，时间戳:', timestamp);
       
       if (!response.ok) {
         throw new Error(`加载数据失败: ${response.status} - 请检查数据文件`);
@@ -448,6 +452,12 @@ function App() {
   }, []);
 
   // 手动刷新数据
+  const handleManualRefresh = async () => {
+    console.log('🔄 手动刷新数据...');
+    await loadData();
+  };
+  
+  // 原有的手动刷新数据
   const handleManualUpdate = async () => {
     const now = Date.now();
     const cooldownTime = 60000; // 1分钟冷却时间
@@ -619,12 +629,21 @@ function App() {
           </button>
           
           <button
+            onClick={handleManualRefresh}
+            disabled={loading}
+            className={`control-btn ${loading ? 'updating' : ''}`}
+            title="刷新地图数据"
+          >
+            {loading ? '⏳' : '🔄'}
+          </button>
+          
+          <button
             onClick={handleManualUpdate}
             disabled={isUpdating}
             className={`control-btn ${isUpdating ? 'updating' : ''}`}
             title="手动同步飞书数据"
           >
-            {isUpdating ? '⏳' : '🔄'}
+            {isUpdating ? '⏳' : '📊'}
           </button>
           
           <button
@@ -884,9 +903,23 @@ const parseCSV = (csvText: string): MarkerData[] => {
     const stikerHarga = values[19]?.replace(/"/g, '') || '';
     const lastService = values[20]?.replace(/"/g, '') || '';
     const lastBungaEs = values[21]?.replace(/"/g, '') || '';
-    const latitude = parseFloat(values[22]?.replace(/"/g, '') || '0');
-    const longitude = parseFloat(values[23]?.replace(/"/g, '') || '0');
+    const latitudeStr = values[22]?.replace(/"/g, '') || '0';
+    const longitudeStr = values[23]?.replace(/"/g, '') || '0';
+    const latitude = parseFloat(latitudeStr);
+    const longitude = parseFloat(longitudeStr);
+    
     const outletStatus = values[24]?.replace(/"/g, '') || '';
+    
+    // 调试特定记录
+    if (outletCode === '250721193440') {
+      console.log('🔍 调试记录 250721193440:');
+      console.log('原始行:', lines[i]);
+      console.log('解析值:', values);
+      console.log('DUS per Day:', dusPerDay);
+      console.log('Total Value IDR:', totalValueIDR);
+      console.log('Total DUS:', totalDUS);
+      console.log('Tanggal First PO:', tanggalFirstPOEsKrim);
+    }
     
     // 筛选逻辑：Outlet Status = "Active"
     if (outletStatus !== 'Active') {
