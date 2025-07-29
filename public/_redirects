@@ -1,2 +1,5 @@
+# 确保CSV文件不被重定向
+/*.csv   /markers.csv   200
+
 # SPA路由重定向
 /*    /index.html   200
