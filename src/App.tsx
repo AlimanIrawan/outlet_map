@@ -791,8 +791,17 @@ function App() {
 
 // CSV解析函数 - 严格要求25字段格式，正确处理包含逗号的引号字段
 const parseCSV = (csvText: string): MarkerData[] => {
-  const lines = csvText.trim().split('\n');
-  if (lines.length < 2) return [];
+  // 修复CSV解析问题：不使用trim()以避免丢失最后一行数据
+  // 先移除开头和结尾的空白字符，但保留换行符结构
+  const cleanedText = csvText.replace(/^\s+/, '').replace(/\s+$/, '');
+  const lines = cleanedText.split('\n').filter(line => line.trim().length > 0);
+  
+  console.log(`📊 CSV原始行数: ${csvText.split('\n').length}, 清理后有效行数: ${lines.length}`);
+  
+  if (lines.length < 2) {
+    console.log('❌ CSV文件行数不足，需要至少2行（标题+数据）');
+    return [];
+  }
 
   // 正确解析CSV行，处理引号内的逗号
   const parseCSVLine = (line: string): string[] => {
