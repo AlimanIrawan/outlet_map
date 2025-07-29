@@ -450,9 +450,12 @@ function App() {
   // 同步飞书数据
   const [isSyncing, setIsSyncing] = useState(false);
   const handleSyncData = async () => {
+    console.log('🔄 同步按钮被点击了！');
     try {
       setIsSyncing(true);
       setError(null);
+      
+      console.log('📡 开始发送API请求到:', 'https://outlet-sync-service.onrender.com/sync');
       
       // 调用后端API触发飞书数据同步
       const response = await fetch('https://outlet-sync-service.onrender.com/sync', {
@@ -462,23 +465,27 @@ function App() {
         },
       });
       
+      console.log('📡 API响应状态:', response.status, response.statusText);
+      
       if (!response.ok) {
         throw new Error(`同步失败: ${response.status}`);
       }
       
       const result = await response.json();
-      console.log('同步结果:', result);
+      console.log('✅ 同步结果:', result);
       
       // 等待一段时间让数据更新完成，然后重新加载
       setTimeout(() => {
+        console.log('🔄 3秒后重新加载数据...');
         loadData();
       }, 3000);
       
     } catch (error) {
-      console.error('同步数据失败:', error);
+      console.error('❌ 同步数据失败:', error);
       setError('同步数据失败，请稍后重试');
     } finally {
       setIsSyncing(false);
+      console.log('🏁 同步操作完成');
     }
   };
 
