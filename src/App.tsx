@@ -421,8 +421,8 @@ function App() {
       setLoading(true);
       setError(null);
       
-      // 暂时使用本地CSV文件，等GitHub API配置完成后再切换
-      const response = await fetch(`${process.env.PUBLIC_URL || ''}/markers.csv`);
+      // 从GitHub读取最新的CSV数据
+      const response = await fetch('https://raw.githubusercontent.com/AlimanIrawan/outlet_map/main/public/markers.csv');
       
       if (!response.ok) {
         throw new Error(`加载数据失败: ${response.status} - 请检查数据文件`);
@@ -791,12 +791,16 @@ function App() {
 
 // CSV解析函数 - 严格要求25字段格式，正确处理包含逗号的引号字段
 const parseCSV = (csvText: string): MarkerData[] => {
-  // 修复CSV解析问题：不使用trim()以避免丢失最后一行数据
-  // 先移除开头和结尾的空白字符，但保留换行符结构
-  const cleanedText = csvText.replace(/^\s+/, '').replace(/\s+$/, '');
-  const lines = cleanedText.split('\n').filter(line => line.trim().length > 0);
+  // 修复CSV解析问题：正确处理没有结尾换行符的文件
+  // 移除开头空白，但保留所有内容
+  const cleanedText = csvText.replace(/^\s+/, '');
   
-  console.log(`📊 CSV原始行数: ${csvText.split('\n').length}, 清理后有效行数: ${lines.length}`);
+  // 分割行，然后过滤掉空行
+  const allLines = cleanedText.split('\n');
+  const lines = allLines.filter(line => line.trim().length > 0);
+  
+  console.log(`📊 CSV原始分割行数: ${allLines.length}, 有效行数: ${lines.length}`);
+  console.log(`📊 最后一行内容: "${allLines[allLines.length - 1]}"`);
   
   if (lines.length < 2) {
     console.log('❌ CSV文件行数不足，需要至少2行（标题+数据）');
