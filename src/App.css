@@ -274,7 +274,11 @@ tbody tr:last-child td {
 }
 
 .panel-header {
-  display: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
 }
 
 .refresh-btn-small {
@@ -748,22 +752,22 @@ tbody tr:last-child td {
 /* Type过滤按钮样式 */
 .type-filter-btn {
   position: absolute;
-  top: 3px;
-  right: 80px;
+  top: 20px;
+  right: 78px;
   z-index: 1000;
   background: white;
   border: 2px solid #ddd;
   border-radius: 8px;
-  width: 50px;
-  height: 50px;
+  width: 48px;
+  height: 48px;
   font-size: 18px;
   cursor: pointer;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
+  padding: 12px;
 }
 
 .type-filter-btn:hover {
@@ -788,4 +792,35 @@ tbody tr:last-child td {
   border-color: #dc3545;
   color: #dc3545;
   background: #fff8f8;
+}
+
+/* 同步按钮样式 */
+.sync-btn-map {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background: white;
+  border: 2px solid #27ae60;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  width: 48px;
+  height: 48px;
+  color: #27ae60;
+}
+
+.sync-btn-map:hover:not(:disabled) {
+  background: #e8f5e8;
+  border-color: #27ae60;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.sync-btn-map:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
 }

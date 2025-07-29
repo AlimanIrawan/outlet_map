@@ -531,27 +531,7 @@ function App() {
     <div className="App">
       {/* 左上角统计面板 */}
       <div className="stats-panel">
-        <div className="panel-header">
-          <h2>店铺统计</h2>
-          <div className="button-group">
-            <button 
-              onClick={handleRefresh} 
-              disabled={loading}
-              className="refresh-btn-small"
-              title="刷新地图数据"
-            >
-              {loading ? '⏳' : '🔄'}
-            </button>
-            <button 
-              onClick={handleSyncData} 
-              disabled={isSyncing || loading}
-              className="sync-btn-small"
-              title="从飞书同步最新数据"
-            >
-              {isSyncing ? '⏳' : '🔄📊'}
-            </button>
-          </div>
-        </div>
+
         
         {error && (
           <div className="error-message-small">
@@ -615,14 +595,24 @@ function App() {
               }
             />
             
+            {/* Type过滤按钮 */}
+            <button 
+              className={`type-filter-btn ${typeFilter === 'all' ? 'all' : typeFilter === 'Stik' ? 'stik' : 'ember'}`}
+              onClick={() => handleTypeFilterClick()}
+              title={`当前显示: ${typeFilter === 'all' ? '全部店铺' : typeFilter === 'Stik' ? 'Stik店铺' : 'Ember店铺'}`}
+            >
+              {typeFilter === 'all' ? '🏪' : typeFilter === 'Stik' ? '🍡' : '🍨'}
+            </button>
+            
             {/* 地图控制按钮组 */}
             <div className="map-controls">
               <button 
-                className={`type-filter-btn ${typeFilter === 'all' ? 'all' : typeFilter === 'Stik' ? 'stik' : 'ember'}`}
-                onClick={() => handleTypeFilterClick()}
-                title={`当前显示: ${typeFilter === 'all' ? '全部店铺' : typeFilter === 'Stik' ? 'Stik店铺' : 'Ember店铺'}`}
+                className={`sync-btn-map`}
+                onClick={handleSyncData}
+                disabled={isSyncing || loading}
+                title="从飞书同步最新数据"
               >
-                {typeFilter === 'all' ? '🏪' : typeFilter === 'Stik' ? '🍡' : '🍨'}
+                {isSyncing ? '⏳' : '🔄'}
               </button>
               
               <button 
